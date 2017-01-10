@@ -43,6 +43,10 @@
 #  If you want to run calliope on a custom port, specify it
 #     Default: false
 #
+# [*midonet_version*]
+#  Version of midonet
+#     Default: '5.2'
+#
 # Please note that Keystone port is not mandatory and defaulted to 35537.
 #
 # === Examples
@@ -90,6 +94,7 @@ class midonet::analytics (
   $allinone           = false,
   $curator_version    = '3.5',
   $calliope_port      = undef,
+  $midonet_version    = undef,
 ) {
 
 

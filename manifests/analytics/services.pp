@@ -10,24 +10,24 @@
 #   For making mn-conf command available in the Analytics Node
 #   Default: midonet-analytics
 #
-# [*midonet-tools*]
+# [*tools_package_name*]
 #   For making mn-conf command available in the Analytics Node
 #   Default: midonet-tools
+#
+# [*elk_package_name*]
+#   Name of the elk package
+#   Default: midonet-elk
+#
+# [*calliope_port*]
+#  Port where calliope listens to
+#
+# [*midonet_version*]
+#  Port where calliope listens to
 #
 # === Authors
 #
 # Midonet (http://midonet.org)
 #
-# === Parameters
-# [*analytics_package_name*]
-# Package name for analytics
-# Default: 'midonet-analytics'
-#
-# [*tools_package_name*]
-#   Midonet Tools package name
-#
-# [*calliope_port*]
-#  Port where calliope listens to
 #
 # === Copyright
 #
@@ -49,36 +49,40 @@
 class midonet::analytics::services (
   $analytics_package_name      = 'midonet-analytics',
   $tools_package_name          = 'midonet-tools',
+  $elk_package_name            = 'midonet-elk',
   $calliope_port               = '8080',
+  $midonet_version             = '5.2'
 ) {
+  include ::stdlib
+  $real_analytics_package_name = versioncmp($midonet_version,'5.2') ? {true => $elk_package_name, default => $analytics_package_name}
 
   package { $tools_package_name:
     ensure => present,
     name   => $tools_package_name,
   }
 
-  package { $analytics_package_name:
+  package { $real_analytics_package_name:
     ensure => present,
-    name   => $analytics_package_name,
+    name   => $real_analytics_package_name,
   } ->
 
   exec {'service logstash restart':
     path   => ['/usr/bin', '/usr/sbin',],
-    before => Service[$analytics_package_name],
+    before => Service[$real_analytics_package_name],
   }
 
   unless $calliope_port == '8080' {
     exec { "echo calliope.service.ws_port : ${calliope_port} | mn-conf set -t default":
       path   => ['/usr/bin', '/bin'],
-      before => Service[$analytics_package_name],
+      before => Service[$real_analytics_package_name],
     }
   }
 
-  service { $analytics_package_name:
+  service { $real_analytics_package_name:
     ensure  => 'running',
-    name    => $analytics_package_name,
+    name    => $real_analytics_package_name,
     enable  => true,
-    require => Package[$analytics_package_name],
+    require => Package[$real_analytics_package_name],
   }
 
 

@@ -95,19 +95,29 @@ class midonet::analytics (
   $curator_version    = '3.5',
   $calliope_port      = undef,
   $midonet_version    = undef,
+  $elk_bind_ip        = undef,
 ) {
 
-
+  $logstash_version = versioncmp($midonet_version,'5.2') ? {true => '2.4', default => '1.5'}
+  $elastic_version  = versioncmp($midonet_version,'5.2') ? {true => '2.4', default => '1.7'}
+  if versioncmp($midonet_version,'5.2')
+  {
+    $config = { 'network.host' => ['_local_',"${elk_bind_ip}"]}
+  }
+  else {
+    $config = undef
+  }
     class { 'logstash':
       manage_repo  => true,
       java_install => true,
-      repo_version => '1.5',
+      repo_version => $logstash_version,
     }
     contain logstash
 
     class { 'elasticsearch':
       manage_repo  => true,
-      repo_version => '1.7',
+      repo_version => $elastic_version,
+      config       => $config,
       require      => Class['::logstash']
     }
     contain elasticsearch

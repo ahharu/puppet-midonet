@@ -183,8 +183,11 @@ class midonet::cluster::run (
   $midonet_version                 = '5.2'
 ) {
 
+  include ::stdlib
+
   $api_proto      = $insights_ssl? {true => 'https://' , default => 'http://'}
   $mem_login_host = "${api_proto}${cluster_api_address}${cluster_api_port}"
+  $new_api        = versioncmp($midonet_version,'5.2') ? {true => true, default => false}
 
   if $package_ensure != 'absent' {
     file { '/tmp/mn-cluster_config.sh':

@@ -166,7 +166,8 @@ class midonet::analytics (
       }
 
       class { 'midonet::analytics::services':
-        calliope_port => $calliope_port,
+        calliope_port   => $calliope_port,
+        midonet_version => $midonet_version,
         require       => [
           Class['::logstash','::elasticsearch'],
           Elasticsearch::Instance['es-01'],

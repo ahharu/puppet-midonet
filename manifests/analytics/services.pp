@@ -54,7 +54,7 @@ class midonet::analytics::services (
   $midonet_version             = '5.2'
 ) {
   include ::stdlib
-  $real_analytics_package_name = versioncmp($midonet_version,'5.2') ? {true => $elk_package_name, default => $analytics_package_name}
+  $real_analytics_package_name = versioncmp($midonet_version,'5.2') ? {'1' => $elk_package_name, default => $analytics_package_name}
 
   package { $tools_package_name:
     ensure => present,

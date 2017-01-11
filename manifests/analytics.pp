@@ -98,9 +98,9 @@ class midonet::analytics (
   $elk_bind_ip        = undef,
 ) {
 
-  $logstash_version = versioncmp($midonet_version,'5.2') ? {true => '2.4', default => '1.5'}
-  $elastic_version  = versioncmp($midonet_version,'5.2') ? {true => '2.4', default => '1.7'}
-  if versioncmp($midonet_version,'5.2')
+  $logstash_version = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.5'}
+  $elastic_version  = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.7'}
+  if versioncmp($midonet_version,'5.2') > 0
   {
     $config = { 'network.host' => ['_local_',"${elk_bind_ip}"]}
   }

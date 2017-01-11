@@ -187,7 +187,7 @@ class midonet::cluster::run (
 
   $api_proto      = $insights_ssl? {true => 'https://' , default => 'http://'}
   $mem_login_host = "${api_proto}${cluster_api_address}${cluster_api_port}"
-  $new_api        = versioncmp($midonet_version,'5.2') ? {true => true, default => false}
+  $new_api        = versioncmp($midonet_version,'5.2') ? {'1' => true, default => false}
 
   if $package_ensure != 'absent' {
     file { '/tmp/mn-cluster_config.sh':
@@ -229,8 +229,13 @@ class midonet::cluster::run (
         content => template('midonet/analytics/analytics_settings.sh.erb'),
       } ->
       exec { '/bin/bash /tmp/analytics_settings.sh': }
-      if versioncmp($midonet_version,'5.2')
+      if versioncmp($midonet_version,'5.2') > 0
       {
+        file { 'analytics_settings_local':
+          ensure  => present,
+          path    => '/tmp/analytics_settings_local.conf',
+          content => template('midonet/analytics/analytics_settings_local.erb'),
+        } ->
         file { 'analytics_settings_script local':
           ensure  => present,
           path    => '/tmp/analytics_settings_local.sh',

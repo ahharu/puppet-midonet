@@ -98,8 +98,10 @@ class midonet::analytics (
   $elk_bind_ip        = undef,
 ) {
 
-  $logstash_version = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.5'}
-  $elastic_version  = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.7'}
+  $logstash_version            = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.5'}
+  $elastic_version             = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.7'}
+  $real_analytics_package_name = versioncmp($midonet_version,'5.2') ? {'1' => 'midonet-elk', default => 'midonet-analytics'}
+
   if versioncmp($midonet_version,'5.2') > 0
   {
     $config = { 'network.host' => ['_local_',"${elk_bind_ip}"]}
@@ -178,7 +180,7 @@ class midonet::analytics (
       unless $allinone {
         class { 'midonet::analytics::quickstart':
           zookeeper_hosts => $zookeeper_hosts,
-          notify          => Service['midonet-analytics']
+          notify          => Service[$real_analytics_package_name]
         }
       }
 

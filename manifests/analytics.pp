@@ -105,8 +105,13 @@ class midonet::analytics (
   if versioncmp($midonet_version,'5.2') > 0
   {
     $config = { 'network.host' => ['_local_',"${elk_bind_ip}"]}
-    Apt::Source       <| title == 'logstash' |> {location => "http://packages.elastic.co/logstash/${logstash_version}/debian"}
-    Yumrepo::Logstash <| title == 'logstash' |> {baseurl => "http://packages.elastic.co/logstash/${logstash_version}/centos"}
+    if $::osfamily == 'RedHat'
+    {
+      Yumrepo::Logstash <| title == 'logstash' |> {baseurl => "http://packages.elastic.co/logstash/${logstash_version}/centos"}
+    }
+    else {
+      Apt::Source       <| title == 'logstash' |> {location => "http://packages.elastic.co/logstash/${logstash_version}/debian"}
+    }
   }
   else {
     $config = undef

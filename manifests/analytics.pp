@@ -98,13 +98,15 @@ class midonet::analytics (
   $elk_bind_ip        = undef,
 ) {
 
-  $logstash_version            = versioncmp($midonet_version,'5.2') ? {'1' => '2.x', default => '1.5'}
+  $logstash_version            = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.5'}
   $elastic_version             = versioncmp($midonet_version,'5.2') ? {'1' => '2.x', default => '1.7'}
   $real_analytics_package_name = versioncmp($midonet_version,'5.2') ? {'1' => 'midonet-elk', default => 'midonet-analytics'}
 
   if versioncmp($midonet_version,'5.2') > 0
   {
     $config = { 'network.host' => ['_local_',"${elk_bind_ip}"]}
+    Apt::Source<| title = 'logstash' |> {location => "http://packages.elastic.co/logstash/${logstash_version}/debian"}
+    Yumrepo::Logstash<| title = 'logstash' |> {baseurl => "http://packages.elastic.co/logstash/${logstash_version}/centos"}
   }
   else {
     $config = undef

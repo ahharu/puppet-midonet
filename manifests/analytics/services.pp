@@ -72,7 +72,7 @@ class midonet::analytics::services (
       require => Package[$real_analytics_package_name],
     }
 
-    exec {'service elasticsearch-instance-es-01 restart':
+    exec {'service elasticsearch-es-01 restart':
       path    => ['/usr/bin', '/usr/sbin',],
       require => Package[$real_analytics_package_name],
     }

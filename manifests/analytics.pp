@@ -185,9 +185,17 @@ class midonet::analytics (
       }
 
       unless $allinone {
-        class { 'midonet::analytics::quickstart':
-          zookeeper_hosts => $zookeeper_hosts,
-          notify          => Service[$real_analytics_package_name]
+        if versioncmp($midonet_version,'5.2') > 0
+        {
+          class { 'midonet::analytics::quickstart':
+            zookeeper_hosts => $zookeeper_hosts,
+          }
+        }
+        else {
+          class { 'midonet::analytics::quickstart':
+            zookeeper_hosts => $zookeeper_hosts,
+            notify          => Service[$real_analytics_package_name]
+          }
         }
       }
 

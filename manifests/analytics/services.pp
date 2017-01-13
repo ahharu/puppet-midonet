@@ -68,13 +68,13 @@ class midonet::analytics::services (
     } ->
 
     exec {'service logstash restart':
-      path  => ['/usr/bin', '/usr/sbin',],
-      after => Package[$real_analytics_package_name],
+      path    => ['/usr/bin', '/usr/sbin',],
+      require => Package[$real_analytics_package_name],
     }
 
     exec {'service elasticsearch-instance-es-01 restart':
-      path  => ['/usr/bin', '/usr/sbin',],
-      after => Package[$real_analytics_package_name],
+      path    => ['/usr/bin', '/usr/sbin',],
+      require => Package[$real_analytics_package_name],
     }
 
   }

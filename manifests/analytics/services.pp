@@ -78,11 +78,13 @@ class midonet::analytics::services (
     }
   }
 
-  service { $real_analytics_package_name:
-    ensure  => 'running',
-    name    => $real_analytics_package_name,
-    enable  => true,
-    require => Package[$real_analytics_package_name],
+  if versioncmp($midonet_version,'5.2') <= 0 {
+    service { $real_analytics_package_name:
+      ensure  => 'running',
+      name    => $real_analytics_package_name,
+      enable  => true,
+      require => Package[$real_analytics_package_name],
+    }
   }
 
 

@@ -104,6 +104,7 @@ class midonet::analytics (
 
   if versioncmp($midonet_version,'5.2') > 0
   {
+    $ins_service_name = 'elasticsearch-es-01'
     $config = { 'network.host' => ['_local_',"${elk_bind_ip}"]}
     if $::osfamily == 'RedHat'
     {
@@ -115,6 +116,7 @@ class midonet::analytics (
   }
   else {
     $config = undef
+    $ins_service_name = 'elasticsearch-instance-es-01'
   }
     class { 'logstash':
       manage_repo  => true,
@@ -220,7 +222,7 @@ class midonet::analytics (
         line    => "ES_HEAP_SIZE='${heap_size_gb}g'",
         match   => '^ES_HEAP_SIZE.*$',
         require => Package['elasticsearch'],
-        notify  => Service['elasticsearch-instance-es-01'],
+        notify  => Service[$ins_service_name],
       }
     }
     if $::osfamily == 'RedHat' {
@@ -237,7 +239,7 @@ class midonet::analytics (
         line    => "ES_HEAP_SIZE='${heap_size_gb}g'",
         match   => '^ES_HEAP_SIZE.*$',
         require => Package['elasticsearch'],
-        notify  => Service['elasticsearch-instance-es-01'],
+        notify  => Service[$ins_service_name],
       }
     }
 }

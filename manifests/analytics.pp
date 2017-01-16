@@ -111,21 +111,22 @@ class midonet::analytics (
   else {
     $config = undef
     $ins_service_name = 'elasticsearch-instance-es-01'
-  }
+
+    class { 'elasticsearch':
+      manage_repo  => true,
+      repo_version => $elastic_version,
+      config       => $config,
+      require      => Class['::logstash']
+    }
+    contain elasticsearch
+
     class { 'logstash':
       manage_repo  => true,
       repo_version => $logstash_version,
     }
     contain logstash
 
-    class { 'elasticsearch':
-      manage_repo  => true,
-      java_install => true,
-      repo_version => $elastic_version,
-      config       => $config,
-      require      => Class['::logstash']
-    }
-    contain elasticsearch
+
 
     elasticsearch::instance { 'es-01':
       require => Class['::logstash','::elasticsearch']

@@ -96,16 +96,28 @@ class midonet::analytics (
   $calliope_port      = undef,
   $midonet_version    = undef,
   $elk_bind_ip        = undef,
+  $elk_cluster_name   = 'elasticsearch',
+  $elk_hosts          = ["$::ipaddress"]
 ) {
-
-  $logstash_version            = versioncmp($midonet_version,'5.2') ? {'1' => '5.x', default => '1.5'}
-  $elastic_version             = versioncmp($midonet_version,'5.2') ? {'1' => '5.x', default => '1.7'}
+  include ::stdlib
+  $logstash_version            = versioncmp($midonet_version,'5.2') ? {'1' => '2.4', default => '1.5'}
+  $elastic_version             = versioncmp($midonet_version,'5.2') ? {'1' => '2.x', default => '1.7'}
   $real_analytics_package_name = versioncmp($midonet_version,'5.2') ? {'1' => 'midonet-elk', default => 'midonet-analytics'}
 
   if versioncmp($midonet_version,'5.2') > 0
   {
+    if $::osfamily == 'RedHat'
+      {
+        Yumrepo::Logstash <| title == 'logstash' |> {baseurl => "http://packages.elastic.co/logstash/${logstash_version}/centos"}
+      }
+      else {
+        Apt::Source       <| title == 'logstash' |> {location => "http://packages.elastic.co/logstash/${logstash_version}/debian"}
+      }
     $ins_service_name = 'elasticsearch-es-01'
-    $config = { 'network.host' => ['_local_',"${elk_bind_ip}"]}
+    $config = { 'network.host' => ['_local_',"${elk_bind_ip}"],
+                'cluster.name' => $elk_cluster_name,
+                'discovery.zen.ping.unicast.hosts' => $elk_hosts,
+                'discovery.zen.minimum_master_nodes' => (size($elk_hosts)/2)+1}
 
   }
   else {

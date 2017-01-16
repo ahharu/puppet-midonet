@@ -123,6 +123,7 @@ class midonet::analytics (
   else {
     $config = undef
     $ins_service_name = 'elasticsearch-instance-es-01'
+  }
 
     class { 'elasticsearch':
       manage_repo  => true,
@@ -249,4 +250,4 @@ class midonet::analytics (
         notify  => Service[$ins_service_name],
       }
     }
-}
+  }

@@ -56,6 +56,14 @@ class midonet::analytics::services (
   include ::stdlib
   $real_analytics_package_name = versioncmp($midonet_version,'5.2') ? {'1' => $elk_package_name, default => $analytics_package_name}
 
+  if $::osfamily == 'Debian' and $::lsbdistrelease == '14.04'
+  {
+    $logstash_command = 'initctl restart logstash'
+  }
+  else {
+    $logstash_command = 'service logstash restart'
+  }
+
   if versioncmp($midonet_version,'5.2') > 0 {
     package { $tools_package_name:
       ensure => present,
@@ -67,8 +75,8 @@ class midonet::analytics::services (
       name   => $real_analytics_package_name,
     } ->
 
-    exec {'service logstash restart':
-      path    => ['/usr/bin', '/usr/sbin',],
+    exec { $logstash_command:
+      path    => ['/usr/bin', '/usr/sbin','/sbin'],
       require => Package[$real_analytics_package_name],
     }
 
@@ -90,8 +98,8 @@ class midonet::analytics::services (
       name   => $real_analytics_package_name,
     } ->
 
-    exec {'service logstash restart':
-      path   => ['/usr/bin', '/usr/sbin',],
+    exec { $logstash_command:
+      path   => ['/usr/bin', '/usr/sbin','/sbin'],
       before => Service[$real_analytics_package_name],
     }
 

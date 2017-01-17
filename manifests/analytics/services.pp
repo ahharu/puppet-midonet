@@ -65,6 +65,13 @@ class midonet::analytics::services (
   }
 
   if versioncmp($midonet_version,'5.2') > 0 {
+
+    if $::osfamily == 'Debian' {
+      exec {'update-ca-certificates -f':
+        path   => ['/usr/bin', '/usr/sbin',],
+        before => Package[$tools_package_name],
+      }
+    }
     package { $tools_package_name:
       ensure => present,
       name   => $tools_package_name,

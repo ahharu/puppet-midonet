@@ -47,6 +47,18 @@
 #  Version of midonet
 #     Default: '5.2'
 #
+# [*elk_bind_ip*]
+#  Where to bind elk instance
+#     Default: 'undef' , will bind to $::ipaddress
+#
+# [*elk_cluster_name*]
+#  Name of elk cluster
+#     Default: 'elasticsearch'
+#
+# [*elk_hosts*]
+#  List of elk seeds
+#     Default: ['$::ipaddress']
+#
 # Please note that Keystone port is not mandatory and defaulted to 35537.
 #
 # === Examples

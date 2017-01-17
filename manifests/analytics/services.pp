@@ -68,7 +68,7 @@ class midonet::analytics::services (
 
     if $::osfamily == 'Debian' {
       exec {'update-ca-certificates -f':
-        path   => ['/usr/bin', '/usr/sbin',],
+        path   => ['/usr/bin', '/usr/sbin','/bin'],
         before => Package[$tools_package_name],
       }
     }
